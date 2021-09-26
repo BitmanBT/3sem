@@ -14,6 +14,9 @@ int main() {
 	printf("Enter the string: ");
 	
 	string = (char*) malloc(sizeof(char));
+	/*
+	TODO: дважды ниже продублировали один и тот же код. Вынесите его в отдельную ф-ю ReadString.	
+	*/
 	
 	int i = 0; int mem;
 	while ((mem = getchar()) != '\n') {
@@ -54,6 +57,9 @@ int main() {
 	
 	return 0;
 }
+
+// TODO: Помню, мы на семинаре видели, что иногда программа падает с seg fault'ом. Путем последовательного закомментирования кусков кода можно выяснить строку, в которой падение и происходит.
+// Дальше уже зная строку, разбираться как исправить.
 
 void Split(char* string, char* delimiters, char*** tokens, int* tokensCount) {
 	int i = 0; *tokensCount = 0;
