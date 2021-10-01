@@ -14,9 +14,6 @@ int main() {
 	printf("Enter the string: ");
 	
 	string = (char*) malloc(sizeof(char));
-	/*
-	TODO: дважды ниже продублировали один и тот же код. Вынесите его в отдельную ф-ю ReadString.	
-	*/
 	
 	int i = 0; int mem;
 	while ((mem = getchar()) != '\n') {
@@ -42,14 +39,14 @@ int main() {
 	
 	Split(string, delimiters, &tokens, &tokensCount);
 	
-	printf("Your splitted string:\n");
+	/*printf("Your splitted string:\n");
 	int j;
 	for (i = 0; i < tokensCount; i++) {
 		for (j = 0; j < strlen(tokens[i]); j++) {
 			printf("%c", *(tokens[i] + j));
 		}
 		printf("\n");
-	}
+	}*/
 	
 	free(string);
 	free(delimiters);
@@ -58,17 +55,43 @@ int main() {
 	return 0;
 }
 
-// TODO: Помню, мы на семинаре видели, что иногда программа падает с seg fault'ом. Путем последовательного закомментирования кусков кода можно выяснить строку, в которой падение и происходит.
-// Дальше уже зная строку, разбираться как исправить.
-
 void Split(char* string, char* delimiters, char*** tokens, int* tokensCount) {
 	int i = 0; *tokensCount = 0;
+	char string_copy[strlen(string)];
+	for (i = 0; i < strlen(string); i++) {
+		string_copy[i] = string[i];
+	}
 	
-	char* savetokens = string;
+	/*char* savetokens = string;
 	while (*(*tokens + i) = strtok_r(savetokens, delimiters, &savetokens)) {
 		if (i != 0)
-			*tokens = (char**) realloc(*tokens, i + 1);
+			*tokens = (char**) realloc(*tokens, sizeof(char) * (i + 1));
 		i++;
 		(*tokensCount)++;
+	}*/
+	
+	char* ptr = strtok(string_copy, delimiters);
+	(*tokensCount)++;
+	while (ptr != NULL) {
+		ptr = strtok(NULL, delimiters);
+		(*tokensCount)++;
+	}
+	
+	*tokens = (char**) malloc((*tokensCount) * sizeof(char*));
+	
+	char* ptr_new = strtok(string, delimiters);
+	i = 0;
+	while (ptr_new != NULL) {
+		ptr_new = strtok(NULL, delimiters);
+		*tokens[i] = ptr_new;
+	}
+	
+	printf("Your splitted string:\n");
+	int j;
+	for (i = 0; i < *tokensCount; i++) {
+		for (j = 0; j < strlen(*tokens[i]); j++) {
+			printf("%c", *(*tokens[i] + j));
+		}
+		printf("\n");
 	}
 }

@@ -3,6 +3,7 @@
 #include <malloc.h>
 
 void GenerateString(int n, char* string);
+int CountNumber(int* n);
 
 int main() {
 	int n = 0;
@@ -14,13 +15,7 @@ int main() {
 		scanf("%d", &n);
 	}
 	
-	// TODO: чтобы посчитать 2^n можно воспользовать либо готовой ф-ей pow, либо побитовым сдвигом 1 << n. Если вы хотите написать код сами, а не пользоваться чем-то существющим,
-	// то вынесите это в отдельную ф-ю и соответствующим образом назовите. Пока вы дважды в программе продублировали код возведения двойки в степень.
-	int number_of_elements = 1;
-	int i;
-	for (i = 1; i < n; i++) {
-		number_of_elements = 2 * number_of_elements + 1;
-	}
+	int number_of_elements = CountNumber(&n);
 	
 	char* string;
 	string = (char*) malloc(number_of_elements * sizeof(char));
@@ -28,6 +23,7 @@ int main() {
 	GenerateString(n, string);
 	
 	printf("This is your line:\n");
+	int i = 0;
 	for (i = 0; i < number_of_elements; i++) {
 		printf("%c", string[i]);
 	}
@@ -44,11 +40,7 @@ void GenerateString(int n, char* string) {
 	if (n > 1)
 		GenerateString(n-1, string);
 	
-	int number_of_elements = 1;
-	int i;
-	for (i = 1; i < n; i++) {
-		number_of_elements = 2 * number_of_elements + 1;
-	}
+	int number_of_elements = CountNumber(&n);
 	
 	support_string = (char*) malloc(number_of_elements * sizeof(char));
 	strcat(support_string, string);
@@ -57,4 +49,15 @@ void GenerateString(int n, char* string) {
 	strncpy(string, support_string, strlen(support_string));
 	
 	free(support_string);
+}
+
+int CountNumber(int* n) {
+	int i = 1;
+	int number_of_elements = 1;
+	
+	for (i = 1; i < *n; i++) {
+		number_of_elements = 2 * number_of_elements + 1;
+	}
+	
+	return number_of_elements;
 }
