@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 	}
 	
 	int fd1, fd2;
-	
+	// TODO: куски кода с 31 строки по 49ю и с50 по 64ю почти не отличаются. необходимо избавиться от дублирования кода.
 	if (atoi(argv[1]) == 0) {
 		fd1 = open("a.fifo", O_WRONLY);
 		fd2 = open("b.fifo", O_RDONLY);
