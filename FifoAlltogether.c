@@ -49,6 +49,18 @@ int main(int argc, char* argv[]) {
 		printf("Can't create FIFO\n");
 	}
 	
+<<<<<<< HEAD
+=======
+	pid_t result = fork();
+	 
+	if (result < 0) {
+		printf("Can't fork children\n");
+		exit(-1);
+	}
+	
+	int fd1, fd2;
+	// TODO: куски кода с 31 строки по 49ю и с50 по 64ю почти не отличаются. необходимо избавиться от дублирования кода.
+>>>>>>> ce5e484ee8b1b032e9f85da67f1df6da65a25940
 	if (atoi(argv[1]) == 0) {
 		ChooseTerminal(a, b, buffer, buffer_1, fd1, fd2);
 	} else if (atoi(argv[1]) == 1) {

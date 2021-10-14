@@ -45,14 +45,17 @@ int main() {
 			ToExecute[j] = pointersToWords;
 			j++;
 		}
+		// TODO: как только добъете ф-ю split, то здесь стоит её переиспользовать 
 		
 		pid_t pid = fork();
 		
 		if (pid == -1) {
 			printf("There are some problems with creating child processes on the line %d.\n", __LINE__);
 		} else if (pid == 0) {
+			// TODO стоит воспользоваться вызовом execvp, т.к. мы не знает заранее, сколько входных аргументов есть у ф-и
 			execlp(ToExecute[0], ToExecute[0], ToExecute[1], ToExecute[2], ToExecute[3], NULL);
 		} else {
+			// TODO: пробовали во входной файл писать несколько команд: 2 и более? кажется, что работать не должна 2я и последующие запуститься.
 			exit(0);
 		}
 	}

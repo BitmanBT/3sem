@@ -16,6 +16,7 @@ int main() {
 	string = (char*) malloc(sizeof(char));
 	
 	int i = 0; int mem;
+	// TODO: удалили комментарий про дублирование кода считывания строк, только ничего не поменяли.
 	while ((mem = getchar()) != '\n') {
 		if (i != 0)
 			string = (char*) realloc(string, strlen(string) + sizeof(char));
@@ -95,3 +96,5 @@ void Split(char* string, char* delimiters, char*** tokens, int* tokensCount) {
 		printf("\n");
 	}
 }
+// TODO: Пробую запустить на "a a a" с одним разделительным пробельным символом и ожидаемого результата не получаю. Число слов tokensCount вместо 3 равно 4. 
+// Результирующие слова не выводятся. Временный код для отладки (закомментированный) лучше тоже удалять.
