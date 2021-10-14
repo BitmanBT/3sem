@@ -56,9 +56,6 @@ int main(int argc, char* argv[]) {
 		exit(-1);
 	}
 	
-	int fd1, fd2;
-	// TODO: куски кода с 31 строки по 49ю и с50 по 64ю почти не отличаются. необходимо избавиться от дублирования кода.
-	
 	if (atoi(argv[1]) == 0) {
 		ChooseTerminal(a, b, buffer, buffer_1, fd1, fd2);
 	} else if (atoi(argv[1]) == 1) {
