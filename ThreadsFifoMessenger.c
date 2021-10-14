@@ -108,28 +108,6 @@ int main(int argc, char* argv[]) {
 		printf("Can't create FIFO\n");
 	}
 	
-	/*if (atoi(argv[1]) == 0) {
-		int result;
-		pthread_t result = pthread_create(&thid, (pthread_attr_t *)NULL, ChooseTerminal_0, NULL);
-		
-		if(result != 0) {
-			printf ("Error on thread create, return value = %d\n", result);
-			exit(-1);
-		}
-		
-		printf("Thread created, thid = %d\n", thid);
-	} else if (atoi(argv[1]) == 1) {
-		int result_new;
-		pthread_t result_new = pthread_create(&thid_new, (pthread_attr_t *)NULL, ChooseTerminal_1, NULL);
-		
-		if(result_new != 0) {
-			printf ("Error on thread create, return value = %d\n", result);
-			exit(-1);
-		}
-		
-		printf("Thread created, thid = %d\n", thid_new);
-	}*/
-	
 	if (atoi(argv[1]) == 0) {
 		ChooseTerminal_0();
 	} else if (atoi(argv[1]) == 1) {
