@@ -48,8 +48,6 @@ int main(int argc, char* argv[]) {
 	if (mknod(b, S_IFIFO | 0666, 0) < 0) {
 		printf("Can't create FIFO\n");
 	}
-	
-	pid_t result = fork();
 	 
 	if (result < 0) {
 		printf("Can't fork children\n");
