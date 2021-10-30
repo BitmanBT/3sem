@@ -39,6 +39,8 @@ void* ChooseTerminal_1_get (void* dummy) {
 	}
 }
 
+// TODO: у вас ChooseTerminal_0_get отличается от ChooseTerminal_1_get одним параметром. Нужно принять этот параметр в качестве входного аргумента и избавиться от дублирования кода тем самым
+
 void* ChooseTerminal_1_print (void* dummy) {
 	int fd2 = open(a, O_RDONLY);
 	char buffer_1[100];
