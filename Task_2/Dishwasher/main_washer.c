@@ -24,9 +24,10 @@ int main()
 	GetTime(&dishes, &time, towash);
 
 	int number[4];
+	int i = 0;
 	for (i = 0; i < 4; i++)
 		number[i] = 0;
-	GetNumber(&number, dirty);
+	GetNumber(&dishes, &number, dirty);
 
 	int table = TABLE_LIMIT;
 	int j = 0; int check = 0;
@@ -42,7 +43,7 @@ int main()
 				exit(-1);
 			}
 			else {
-				if (msgfrom.Mybuf.mtype == RECIEVE_MESSAGE)
+				if (msgfrom.MyBuf.mtype == RECIEVE_MESSAGE)
 				{
 					table++;
 				}
@@ -55,7 +56,7 @@ int main()
 				if ((check = msgsnd(msgto.msqid, &msgto.MyBuf, msgto.len, 0)) < 0)
 				{
 					printf("Can\'t send message to queue\n");
-					msgctl(msqid, IPC_RMID, (struct msqid_ds*)NULL);
+					msgctl(msgto.msqid, IPC_RMID, (struct msqid_ds*)NULL);
 					exit(-1);
 				}
 				else {

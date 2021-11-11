@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 #define TABLE_LIMIT 3
-#define	SEND_MESSAGE 1
+#define SEND_MESSAGE 1
 #define RECIEVE_MESSAGE 2
 
 struct MyMsgBuf
@@ -29,12 +29,14 @@ struct ForMsg
 
 void GetAccessToMsgBuffer(struct ForMsg* msg)
 {
+	key_t key;
 	if ((key = ftok(msg->pathname, 0)) < 0)
 	{
 		printf("Can\'t generate key\n");
 		exit(-1);
 	}
-
+	
+	int msqid;
 	if ((msqid = msgget(msg->key, 0666 | IPC_CREAT)) < 0)
 	{
 		printf("Can\'t get msqid\n");
@@ -45,22 +47,23 @@ void GetAccessToMsgBuffer(struct ForMsg* msg)
 void GetTime(char*** dishes, int** time, FILE* towash)
 {
 	int i = 0;
-	while (fscanf(towash, "%s: %d", dishes[i], time[i]) != NULL)
+	while (fscanf(towash, "%s: %d", *dishes[i], time[i]) != NULL)
 		i++;
 }
 
-void GetNumber(int** number, FILE* dirty)
+void GetNumber(char*** dishes, int** number, FILE* dirty)
 {
-	char letter; int j = 0; int check = 1;
+	char letter; int check = 1;
+	int i = 0; int j = 0;
 	for (i = 0; i < 4; i++)
 	{
 		while ((letter = fgetc(dirty)) != EOF)
 		{
-			if (letter == dishes[i][j])
+			if (letter == *dishes[i][j])
 			{
-				for (j = 1; j < strlen(dishes[i]); j++)
+				for (j = 1; j < strlen(*dishes[i]); j++)
 					check++;
-				if (check == strlen(dishes[i]))
+				if (check == strlen(*dishes[i]))
 				{
 					fseek(dirty, 2, SEEK_CUR);
 					*number[i] += atoi(fgetc(dirty));
@@ -72,4 +75,4 @@ void GetNumber(int** number, FILE* dirty)
 	}
 }
 
-#endif / TOWASH_H
+#endif // TOWASH_H
