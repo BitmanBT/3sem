@@ -6,6 +6,8 @@
 #include <sys/msg.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <malloc.h>
 #include <stdio.h>
 
 #define TABLE_LIMIT 3
@@ -44,34 +46,43 @@ void GetAccessToMsgBuffer(struct ForMsg* msg)
 	}
 }
 
-void GetTime(char*** dishes, int** time, FILE* towash)
+void GetTime(char** dishes, int* time, FILE* towash)
 {
 	int i = 0;
-	while (fscanf(towash, "%s: %d", *dishes[i], time[i]) != NULL)
+	while (fscanf(towash, "%s : %d", dishes[i], &time[i]) != EOF)
 		i++;
 }
 
-void GetNumber(char*** dishes, int** number, FILE* dirty)
+void GetNumber(char** dishes, int* number, FILE* dirty)
 {
-	char letter; int check = 1;
 	int i = 0; int j = 0;
+	int letter; int count = 0;
+	
+	while ((letter = fgetc(dirty)) != EOF)
+	{
+		if (letter == '\n')
+			count++;
+	}
+	fseek(dirty, 0, SEEK_SET);
+	
+	char* get_dishes[count]; int get_number[count];
+	for (i = 0; i < count; i++)
+	{
+		get_dishes[i] = (char*) malloc(10*sizeof(char));
+		get_number[i] = 0;
+	}
+	
+	i = 0;
+	while (fscanf(dirty, "%s : %d", get_dishes[i], &get_number[i]) != EOF)
+		i++;
+	
 	for (i = 0; i < 4; i++)
 	{
-		while ((letter = fgetc(dirty)) != EOF)
+		for (j = 0; j < count; j++)
 		{
-			if (letter == *dishes[i][j])
-			{
-				for (j = 1; j < strlen(*dishes[i]); j++)
-					check++;
-				if (check == strlen(*dishes[i]))
-				{
-					fseek(dirty, 2, SEEK_CUR);
-					*number[i] += atoi(fgetc(dirty));
-				}
-			}
-			j = 0;
+			if (strcmp(dishes[i], get_dishes[j]) == 0)
+				number[i] += get_number[j];
 		}
-		fseek(dirty, 0, SEEK_SET);
 	}
 }
 

@@ -1,4 +1,4 @@
-Plate: 4
-Cup: 3
-Spoon:2
-Fork: 1
+Plate : 4
+Cup : 3
+Spoon :2
+Fork : 1

@@ -21,13 +21,16 @@ int main()
 	FILE* dirty = fopen("Dirty.txt", "r");
 
 	char* dishes[4]; int time[4];
-	GetTime(&dishes, &time, towipe);
-
-	int number[4];
 	int i = 0;
 	for (i = 0; i < 4; i++)
+		dishes[i] = (char*) malloc(10*sizeof(char));
+		
+	GetTime(dishes, time, towipe);
+
+	int number[4];
+	for (i = 0; i < 4; i++)
 		number[i] = 0;
-	GetNumber(&dishes, &number, dirty);
+	GetNumber(dishes, number, dirty);
 
 	int table = 0;
 	int j = 0; int check = 0;
@@ -36,7 +39,7 @@ int main()
 		j = 0;
 
 		while (j != number[i])
-		{
+		{	
 			if ((check = msgrcv(msgfrom.msqid, &msgfrom.MyBuf, msgfrom.len, 0, 0)) < 0)
 			{
 				printf("Can\'t recieve message from queue\n");
@@ -61,7 +64,7 @@ int main()
 				}
 				else {
 					j++;
-					printf("Wiped a %s and removed it from the table. It was %d", dishes[i], j);
+					printf("Wiped a %s and removed it from the table. It was %d\n", dishes[i], j);
 					table--;
 				}
 			}
