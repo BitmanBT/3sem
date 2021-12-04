@@ -23,5 +23,18 @@ int main()
 		StrokeSecond(&sockfd, &clilen, &cliaddr, line, &side, A, &cross_vic, &zero_vic);
 	}
 
+	if (((side.second = 1) && (cross_vic = true)) || ((side.second = 0) && (zero_vic = true)))
+	{
+		RcvInfo(&sockfd, &clilen, &cliaddr, line); //Проверка связи
+
+		SendInfo(&sockfd, &clilen, &cliaddr, line, A); //Отправка исходной матрицы
+
+		RcvInfo(&sockfd, &clilen, &cliaddr, line); //Получение запроса на проверку победы-поражения
+
+		CheckVic(&cross_vic, &zero_vic, A); //Проверка
+
+		SendResCheckFirst(&sockfd, &clilen, &cliaddr, line, &side, A, &cross_vic, &zero_vic); //Отправка результатов
+	}
+
 	return 0;
 }
