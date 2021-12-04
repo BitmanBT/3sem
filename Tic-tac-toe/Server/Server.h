@@ -130,7 +130,7 @@ void CheckVic(bool* cross_vic, bool* zero_vic, char* A)
 
 void SendResCheckFirst(int* sockfd, int* clilen, struct sockaddr_in* cliaddr, char* line, struct chosen_side* side, char* A, bool* cross_vic, bool* zero_vic)
 {
-	if ((side->first == *cross_vic) && (*zero_vic == true))
+	if ((side->first == 1) && (*zero_vic == true))
 	{
 		strcpy(line, "1");
 
@@ -142,7 +142,7 @@ void SendResCheckFirst(int* sockfd, int* clilen, struct sockaddr_in* cliaddr, ch
 		}
 	}
 
-	if ((side->first == *zero_vic) && (*cross_vic == true))
+	if ((side->first == 0) && (*cross_vic == true))
 	{
 		strcpy(line, "1");
 
@@ -154,7 +154,7 @@ void SendResCheckFirst(int* sockfd, int* clilen, struct sockaddr_in* cliaddr, ch
 		}
 	}
 
-	if ((side->first == *cross_vic) && (*cross_vic == true))
+	if ((side->first == 1) && (*cross_vic == true))
 	{
 		strcpy(line, "2");
 
@@ -166,7 +166,7 @@ void SendResCheckFirst(int* sockfd, int* clilen, struct sockaddr_in* cliaddr, ch
 		}
 	}
 
-	if ((side->first == *zero_vic) && (*zero_vic == true))
+	if ((side->first == 0) && (*zero_vic == true))
 	{
 		strcpy(line, "2");
 
@@ -190,7 +190,7 @@ void SendResCheckFirst(int* sockfd, int* clilen, struct sockaddr_in* cliaddr, ch
 
 void SendResCheckSecond(int* sockfd, int* clilen, struct sockaddr_in* cliaddr, char* line, struct chosen_side* side, char* A, bool* cross_vic, bool* zero_vic)
 {
-	if ((side->second == *cross_vic) && (*zero_vic == true))
+	if ((side->second == 1) && (*zero_vic == true))
 	{
 		strcpy(line, "1");
 
@@ -202,7 +202,7 @@ void SendResCheckSecond(int* sockfd, int* clilen, struct sockaddr_in* cliaddr, c
 		}
 	}
 
-	if ((side->second == *zero_vic) && (*cross_vic == true))
+	if ((side->second == 0) && (*cross_vic == true))
 	{
 		strcpy(line, "1");
 
@@ -214,7 +214,7 @@ void SendResCheckSecond(int* sockfd, int* clilen, struct sockaddr_in* cliaddr, c
 		}
 	}
 
-	if ((side->second == *cross_vic) && (*cross_vic == true))
+	if ((side->second == 1) && (*cross_vic == true))
 	{
 		strcpy(line, "2");
 
@@ -226,7 +226,7 @@ void SendResCheckSecond(int* sockfd, int* clilen, struct sockaddr_in* cliaddr, c
 		}
 	}
 
-	if ((side->second == *zero_vic) && (*zero_vic == true))
+	if ((side->second == 0) && (*zero_vic == true))
 	{
 		strcpy(line, "2");
 
