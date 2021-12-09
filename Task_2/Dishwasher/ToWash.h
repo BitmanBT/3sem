@@ -31,15 +31,13 @@ struct ForMsg
 
 void GetAccessToMsgBuffer(struct ForMsg* msg)
 {
-	key_t key;
-	if ((key = ftok(msg->pathname, 0)) < 0)
+	if ((msg->key = ftok(msg->pathname, 0)) < 0)
 	{
 		printf("Can\'t generate key\n");
 		exit(-1);
 	}
 	
-	int msqid;
-	if ((msqid = msgget(msg->key, 0666 | IPC_CREAT)) < 0)
+	if ((msg->msqid = msgget(msg->key, 0666 | IPC_CREAT)) < 0)
 	{
 		printf("Can\'t get msqid\n");
 		exit(-1);

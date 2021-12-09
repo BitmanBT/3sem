@@ -17,6 +17,11 @@ int main()
 
 	GetAccessToMsgBuffer(&msgfrom);
 
+	msgfrom.MyBuf.mtype = RECIEVE_MESSAGE;
+
+	msgfrom.len = sizeof(struct MyMsgBuf);
+	msgfrom.MyBuf.mnumbers[0] = 1;
+
 	FILE* towash = fopen("ToWash.txt", "r");
 	FILE* dirty = fopen("Dirty.txt", "r");
 
