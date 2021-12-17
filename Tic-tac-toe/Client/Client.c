@@ -1,12 +1,10 @@
 #include "Client.h"
 
 int main(int argc, char** argv)
-{
-	printf("Welcome to Tic-tac-toe!\n");
-	
-	int sockfd; int n, len;
-	char sendline[1000], recvline[1000];
-	struct sockaddr_in servaddr, cliaddr;
+{	
+	int sockfd;
+	struct sockaddr_in servaddr;
+	struct cliinfo player;
 
 	if (argc != 2)
 	{
@@ -16,28 +14,17 @@ int main(int argc, char** argv)
 
 	char* toBind = (char*)malloc(strlen(argv[1])*sizeof(char));
 	strcpy(toBind, argv[1]);
-	Binding(&sockfd, &cliaddr, &servaddr, toBind);
-
-	printf("Choose what are you going to play with: 0 - to play with zeros, 1 - to play with crosses.\n\
-		Your choice: ");
+	BindServer(&sockfd, &player, &servaddr, toBind);
 	
-	SendStartInfo(&sockfd, &servaddr, sendline, recvline);
+	GetStartInfo(&sockfd, &player, &servaddr);
 
-	bool timeToFinish = false;
+	char A[9]; int i;
+	for (i = 0; i < 9; i++)
+		A[i] = '-';
 
-	char A[10];
-
-	while (timeToFinish == false)
+	while (1)
 	{
-		Ready(&sockfd, &servaddr, sendline);
-		RcvInfo(&sockfd, recvline, A);
-		CheckVic(&sockfd, recvline, &timeToFinish, &servaddr, sendline);
-		if (timeToFinish == false)
-		{
-			SendInfo(&sockfd, &servaddr, sendline);
-			RcvInfo(&sockfd, recvline, A);
-			CheckVic(&sockfd, recvline, &timeToFinish, &servaddr, sendline);
-		}
+		GetSig(&sockfd, &player, &servaddr, A);
 	}
 
 	close(sockfd);

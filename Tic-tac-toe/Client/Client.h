@@ -12,7 +12,19 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-void Binding(int* sockfd, struct sockaddr_in* cliaddr, struct sockaddr_in* servaddr, char* toBind)
+#define RCV_MES '0'
+#define RCV_INFO '1'
+#define SEND_INFO '2'
+#define FINISH '3'
+
+struct cliinfo
+{
+	int clilen;
+	char line[1000];
+	struct sockaddr_in cliaddr;
+};
+
+void BindServer(int* sockfd, struct cliinfo* player, struct sockaddr_in* servaddr, char* toBind)
 {
 	if ((*sockfd = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
 	{
@@ -20,12 +32,12 @@ void Binding(int* sockfd, struct sockaddr_in* cliaddr, struct sockaddr_in* serva
 		exit(1);
 	}
 
-	bzero(cliaddr, sizeof(*cliaddr));
-	cliaddr->sin_family = AF_INET;
-	cliaddr->sin_port = htons(0);
-	cliaddr->sin_addr.s_addr = htonl(INADDR_ANY);
+	bzero(&(player->cliaddr), sizeof(player->cliaddr));
+	(&(player->cliaddr))->sin_family = AF_INET;
+	(&(player->cliaddr))->sin_port = htons(0);
+	(&(player->cliaddr))->sin_addr.s_addr = htonl(INADDR_ANY);
 
-	if (bind(*sockfd, (struct sockaddr*) cliaddr, sizeof(*cliaddr)) < 0)
+	if (bind(*sockfd, &(player->cliaddr), sizeof(player->cliaddr)) < 0)
 	{
 		perror(NULL);
 		close(*sockfd);
@@ -34,7 +46,7 @@ void Binding(int* sockfd, struct sockaddr_in* cliaddr, struct sockaddr_in* serva
 
 	bzero(servaddr, sizeof(*servaddr));
 	servaddr->sin_family = AF_INET;
-	servaddr->sin_port = htons(51000);
+	servaddr->sin_port = htons(8888);
 
 	if (inet_aton(toBind, &servaddr->sin_addr) == 0)
 	{
@@ -57,101 +69,105 @@ void PrintMatrix(char* A)
 	}
 }
 
-void Ready(int* sockfd, struct sockaddr_in* servaddr, char* sendline)
+void RcvMessage(int* sockfd, struct cliinfo* player)
 {
-	printf("Press a button if you are ready to stroke back\n");
-
-	fgets(sendline, 1000, stdin);
-
-	if (sendto(*sockfd, sendline, strlen(sendline) + 1, 0, (struct sockaddr*)servaddr, sizeof(*servaddr)) < 0)
-	{
-		perror(NULL);
-		close(*sockfd);
-		exit(1);
-	}
-}
-
-void SendInfo(int* sockfd, struct sockaddr_in* servaddr, char* sendline)
-{
-	fgets(sendline, 1000, stdin);
-
-	if (sendto(*sockfd, sendline, strlen(sendline) + 1, 0, (struct sockaddr*) servaddr, sizeof(*servaddr)) < 0)
-	{
-		perror(NULL);
-		close(*sockfd);
-		exit(1);
-	}
-}
-
-void RcvSig(int* sockfd, char* recvline)
-{
-	int n;
-
-	if ((n = recvfrom(*sockfd, recvline, 1000, 0, (struct sockaddr*)NULL, NULL)) < 0)
-	{
-		perror(NULL);
-		close(*sockfd);
-		exit(1);
-	}
-
-	printf("%s\n", recvline);
-}
-
-void RcvInfo(int* sockfd, char* recvline, char* A)
-{
-	int n;
-
-	if ((n = recvfrom(*sockfd, recvline, 1000, 0, (struct sockaddr*)NULL, NULL)) < 0)
-	{
-		perror(NULL);
-		close(*sockfd);
-		exit(1);
-	}
-
-	strcpy(A, recvline);
-	A[9] = '\0';
+	bzero(player->line, 1000);
 	
+	int n;
+
+	if ((n = recvfrom(*sockfd, player->line, 1000, 0, NULL, NULL)) < 0)
+	{
+		perror(NULL);
+		close(*sockfd);
+		exit(1);
+	}
+
+	printf("%s\n", player->line);
+}
+
+void RcvInfo(int* sockfd, struct cliinfo* player, char* A)
+{
+	bzero(player->line, 1000);
+	
+	int n;
+
+	if ((n = recvfrom(*sockfd, player->line, 1000, 0, NULL, NULL)) < 0)
+	{
+		perror(NULL);
+		close(*sockfd);
+		exit(1);
+	}
+
+	strcpy(A, player->line);
+	A[9] = '\0';
+
 	PrintMatrix(A);
 }
 
-void SendStartInfo(int* sockfd, struct sockaddr_in* servaddr, char* sendline, char* recvline)
+void SendInfo(int* sockfd, struct cliinfo* player, struct sockaddr_in* servaddr)
 {
-	SendInfo(sockfd, servaddr, sendline);
+	fgets(player->line, 1000, stdin);
 
-	RcvSig(sockfd, recvline);
+	if (sendto(*sockfd, player->line, strlen(player->line) + 1, 0, servaddr, sizeof(*servaddr)) < 0)
+	{
+		perror(NULL);
+		close(*sockfd);
+		exit(1);
+	}
 }
 
-void CheckVic(int* sockfd, char* recvline, bool* timeToFinish, struct sockaddr_in* servaddr, char* sendline)
+void SendSig(int* sockfd, struct cliinfo* player, struct sockaddr_in* servaddr)
 {
-	strcpy(sendline, "0");
+	strcpy(player->line, "0");
 
-	if (sendto(*sockfd, sendline, strlen(sendline) + 1, 0, (struct sockaddr*)servaddr, sizeof(*servaddr)) < 0)
+	if (sendto(*sockfd, player->line, strlen(player->line) + 1, 0, servaddr, sizeof(*servaddr)) < 0)
 	{
 		perror(NULL);
 		close(*sockfd);
 		exit(1);
 	}
+}
+
+void GetStartInfo(int* sockfd, struct cliinfo* player, struct sockaddr_in* servaddr)
+{
+	SendSig(sockfd, player, servaddr);
 	
+	RcvMessage(sockfd, player);
+}
+
+void GetSig(int* sockfd, struct cliinfo* player, struct sockaddr_in* servaddr, char* A)
+{
+	bzero(player->line, 1000);
+
 	int n;
 
-	if ((n = recvfrom(*sockfd, recvline, 1000, 0, (struct sockaddr*)NULL, NULL)) < 0)
+	if ((n = recvfrom(*sockfd, player->line, 1000, 0, NULL, NULL)) < 0)
 	{
 		perror(NULL);
 		close(*sockfd);
 		exit(1);
 	}
 
-	char num = recvline[0];
+	char sig = (player->line)[0];
 
-	if (num == '1')
+	if (sig == RCV_MES)
 	{
-		*timeToFinish = true;
-		printf("You lose\n");
+		RcvMessage(sockfd, player);
 	}
-	else if (num == '2')
+
+	if (sig == RCV_INFO)
 	{
-		*timeToFinish = true;
-		printf("You win\n");
+		RcvInfo(sockfd, player, A);
+	}
+
+	if (sig == SEND_INFO)
+	{
+		SendInfo(sockfd, player, servaddr);
+	}
+
+	if (sig == FINISH)
+	{
+		exit(0);
 	}
 }
 
